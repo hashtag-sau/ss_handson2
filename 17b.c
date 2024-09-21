@@ -17,21 +17,19 @@ int main(){
     pipe(pipefd);
 
     if(fork()){//parent
-        close(1);
         close(pipefd[0]);//cloes read end
 
-        dup(pipefd[1]);//redirect stdout to pipe write end
+        dup2(pipefd[1],1);//fd 1 will now point to what pipefd[1] was pointing to i.e in our case the pipe we created
 
         execlp("ls","ls","-l",NULL); //execlp read writes on std by default i.e on fd 0, 1;
     }
     else{
-        close(0);
         close(pipefd[1]); //close write end
 
-        dup(pipefd[0]);//redirect stdin to pipe read end;
+        dup2(pipefd[0],0);//redirect stdin to pipe read end;
 
         execlp("wc","wc",NULL);
 
     }
 }
-//31     272    1597
+  //33     290    1705
